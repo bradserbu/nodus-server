@@ -67,7 +67,8 @@ class RestExpressInterface extends Interface {
 
         // **
         const send_result = (res, next) => result => {
-            res.send(this.encryptionAdapter.encode(result));
+            // res.send(this.encryptionAdapter.encode(result));
+            res.send(result);
             next();
         };
 
@@ -75,7 +76,7 @@ class RestExpressInterface extends Interface {
         this.api.get('/:service/:command', (req, res, next) => {
             const service = req.params.service;
             const command = req.params.command;
-            const args = this.encryptionAdapter.decode(req.query);
+            const args = req.query;
 
             // ** Make a dynamic service request
             this.request({
@@ -83,7 +84,6 @@ class RestExpressInterface extends Interface {
                 command: command,
                 args: args,
                 options: {
-                    loggingContext: new LoggingContext(req)s
                 }
             })
                 .then(send_result(res, next))
@@ -94,7 +94,6 @@ class RestExpressInterface extends Interface {
         this.api.post('/:service/:command', (req, res, next) => {
             const service = req.params.service;
             const command = req.params.command;
-            const args = this.encryptionAdapter.decode(req.body);
 
             // ** Make a dynamic service request
             this.request({
@@ -102,7 +101,6 @@ class RestExpressInterface extends Interface {
                 command: command,
                 args: args,
                 options: {
-                    loggingContext: new LoggingContext(req)
                 }
             })
                 .catch(send_error(res, next))
